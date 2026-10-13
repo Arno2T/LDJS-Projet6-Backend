@@ -39,8 +39,8 @@ Before you begin, ensure you have installed:
 
 1. Clone this repository:
 ```bash
-git clone <repository-url>
-cd p6-dfsjs-backend
+git clone https://github.com/Arno2T/LDJS-Projet6-Backend.git
+cd LDJS-Projet6-Backend
 ```
 
 2. Install dependencies:
@@ -62,6 +62,11 @@ NODE_ENV=development
 ```
 
 ### Running the Application
+
+Run docker
+```bash
+docker compose up --build -d
+```
 
 **Important**: Ensure MongoDB is running locally before starting the application.
 
