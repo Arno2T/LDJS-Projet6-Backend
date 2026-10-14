@@ -16,6 +16,7 @@ services:
     restart: unless-stopped
 
   workshop_api:
+    image: ${API_IMAGE:-workshop-api:local}
     build: .
     ports:
       - "8080:3000"
