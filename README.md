@@ -31,7 +31,8 @@ Before you begin, ensure you have installed:
 
 - **Node.js** 22.x or higher ([Download](https://nodejs.org/))
 - **npm** 10.x or higher (included with Node.js)
-- **MongoDB** 7.x or higher ([Download](https://www.mongodb.com/try/download/community))
+- **Docker** with Docker Compose v2 (recommended way to run the API, MongoDB included)
+- **MongoDB** 7.x or higher, only if you run the API without Docker ([Download](https://www.mongodb.com/try/download/community))
 
 ## Getting Started
 
@@ -59,14 +60,63 @@ PORT=3000
 MONGO_URI=mongodb://localhost:27017/workshopsdb
 CORS_ORIGIN=http://localhost:5173
 NODE_ENV=development
+
+# Required by Docker Compose (MongoDB root credentials)
+DB_USER=admin
+DB_PASSWORD=choose-a-password
 ```
 
-### Running the Application
+### Running with Docker (recommended)
 
-Run docker
+`docker-compose.yml` starts two containers: `mongo` (MongoDB 7, data persisted in the `mongodb_storage` volume) and `workshop_api` (the API, started once MongoDB is healthy). The API connection string is built from `DB_USER` and `DB_PASSWORD`, so these two variables must be set in `.env`.
+
+**Option 1: build the image locally**
+
 ```bash
 docker compose up --build -d
+docker compose ps    # wait until both containers are "healthy"
 ```
+
+**Option 2: use the image published on GitHub Container Registry**
+
+The CI publishes an image on every push to `main`. Available tags:
+
+| Tag | Description |
+|---|---|
+| `latest` | Latest build of `main` |
+| `X.Y.Z` / `X.Y` | Semantic version created by a release (e.g. `1.0.0`) |
+| `<branch>-<sha>` | Build of a specific commit (e.g. `main-8acdd79`) |
+
+The `API_IMAGE` variable tells Compose which image to use:
+
+```bash
+export API_IMAGE=ghcr.io/arno2t/ldjs-projet6-backend:latest
+docker compose pull workshop_api
+docker compose up --no-build -d
+```
+
+> If the package is private, log in first with a Personal Access Token (scope `read:packages`):
+> `echo <TOKEN> | docker login ghcr.io -u <github-username> --password-stdin`
+
+**URLs** (port `8080` on the host is mapped to port `3000` in the container):
+
+| URL | Description |
+|---|---|
+| http://localhost:8080/health | Health check |
+| http://localhost:8080/api/docs | Swagger UI |
+| http://localhost:8080/api/workshops | Workshops endpoint |
+
+**Useful commands:**
+
+```bash
+docker compose logs -f workshop_api   # follow API logs
+docker compose down                   # stop containers (data is kept)
+docker compose down -v                # stop containers and delete MongoDB data
+```
+
+> The Frontend also uses port `8080`. To run both projects at the same time, change the host port of one of them (e.g. `"8081:3000"` in `docker-compose.yml`).
+
+### Running without Docker
 
 **Important**: Ensure MongoDB is running locally before starting the application.
 
@@ -267,6 +317,19 @@ Client Request
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:e2e` - Run end-to-end tests
 - `npm run lint` - Lint and fix TypeScript files
+
+## Versioning and Releases
+
+Versions are managed by [semantic-release](https://semantic-release.gitbook.io/), based on commit messages that must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+| Commit type | Version bump |
+|---|---|
+| `fix: ...` | patch (`1.0.0` → `1.0.1`) |
+| `feat: ...` | minor (`1.0.0` → `1.1.0`) |
+| `feat!: ...` or `BREAKING CHANGE:` in the body | major (`1.0.0` → `2.0.0`) |
+| `chore:`, `ci:`, `docs:`, `test:`... | no new version |
+
+To publish a version: **Actions** tab > **CI** workflow > **Run workflow** on the `main` branch. The workflow runs the tests, creates the GitHub release (tag, notes, `CHANGELOG.md`, version in `package.json`) and then publishes the Docker image tagged with the version.
 
 ## Environment Variables
 
