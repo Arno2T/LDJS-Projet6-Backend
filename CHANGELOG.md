@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Arno2T/LDJS-Projet6-Backend/compare/v1.0.0...v1.0.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* **api:** read Swagger version from package.json ([9019043](https://github.com/Arno2T/LDJS-Projet6-Backend/commit/9019043796de153c8856c42b4c6b65142c5379fc))
+
 # 1.0.0 (2026-10-18)
 
 
