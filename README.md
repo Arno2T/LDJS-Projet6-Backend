@@ -98,13 +98,13 @@ docker compose up --no-build -d
 > If the package is private, log in first with a Personal Access Token (scope `read:packages`):
 > `echo <TOKEN> | docker login ghcr.io -u <github-username> --password-stdin`
 
-**URLs** (port `8080` on the host is mapped to port `3000` in the container):
+**URLs:**
 
 | URL | Description |
 |---|---|
-| http://localhost:8080/health | Health check |
-| http://localhost:8080/api/docs | Swagger UI |
-| http://localhost:8080/api/workshops | Workshops endpoint |
+| http://localhost:3000/health | Health check |
+| http://localhost:3000/api/docs | Swagger UI |
+| http://localhost:3000/api/workshops | Workshops endpoint |
 
 **Useful commands:**
 
@@ -114,7 +114,7 @@ docker compose down                   # stop containers (data is kept)
 docker compose down -v                # stop containers and delete MongoDB data
 ```
 
-> The Frontend also uses port `8080`. To run both projects at the same time, change the host port of one of them (e.g. `"8081:3000"` in `docker-compose.yml`).
+> Port `3000` must be free on the host (stop any API started with `npm run start:dev` first).
 
 ### Running without Docker
 
