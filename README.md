@@ -329,6 +329,8 @@ Versions are managed by [semantic-release](https://semantic-release.gitbook.io/)
 | `feat!: ...` or `BREAKING CHANGE:` in the body | major (`1.0.0` → `2.0.0`) |
 | `chore:`, `ci:`, `docs:`, `test:`... | no new version |
 
+On every pull request, the **Conventional Commits** job checks commit messages and the PR title with [commitlint](https://commitlint.js.org/). To check a message locally: `echo "feat: my message" | npx commitlint`.
+
 To publish a version: **Actions** tab > **CI** workflow > **Run workflow** on the `main` branch. The workflow runs the tests, creates the GitHub release (tag, notes, `CHANGELOG.md`, version in `package.json`) and then publishes the Docker image tagged with the version.
 
 ## Environment Variables
